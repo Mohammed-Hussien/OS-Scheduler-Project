@@ -65,12 +65,14 @@ private:
     QChart *chart;
     QChartView *chartView;
 
-
+    static int numOfUsedColors;
     QMap<int,QColor> ProcessColors;
-
+    QVector<QColor> Palette;
     vector <vector<string> >data ;
     vector <vector<float>> result;
     void draw();
+    QColor getAndAssignColor(int);
+    void colorGenerator();
 private slots:
     void on_add_clicked();
     void on_remove_clicked();
@@ -79,5 +81,7 @@ private slots:
     void on_reset_clicked();
     void on_algorithm_change(int);
     void draw_ganttChart();
+    void draw_chart();
+
 };
 #endif // MAINWINDOW_H
