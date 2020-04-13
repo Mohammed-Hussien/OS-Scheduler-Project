@@ -259,7 +259,7 @@ vector < vector <float> >  priority_non_pre_emitive(vector < vector <string> >  
 }
 
 
-vector < vector <float> >  R_R(vector < vector <string> >  in, int tq) {
+vector < vector <float> >  R_R(vector < vector <string> >  in, float time) {
 
     /*art = Arrival time,
     bt = Burst time,
@@ -268,87 +268,60 @@ vector < vector <float> >  R_R(vector < vector <string> >  in, int tq) {
     wt = Waiting time*/
 
     vector < vector <float> >  p = str_to_f(in);
-
-        vector < vector <float> >  x,temp;
-
-        int i, n, time, remain, temps = 0, time_quantum;
-
-        int wt = 0, tat = 0;
-        float a,b,c,tot_pr_t=0;  // a =pid  ,b = start time  , c = end time ,tot_pr_t = processor idle or no
-        n = p.size();
-
-        vector<float>art(n);
-        vector<float>bt(n);
-        vector<float>rt(n);
-
-
-        remain = n;
-        // assigning the number of process to remain variable
-
-        for (i = 0; i<n; i++)
-        {
-
-
-            art[i] = p[i][1];
-            bt[i] = p[i][2];
-            rt[i] = bt[i];
-        }
-        time_quantum = tq;
-
-        for (time = 0, i = 0; remain != 0;)
-        {
-            tot_pr_t =tot_pr_t+bt[i];
-            if(art[i]<=tot_pr_t){
-            if (rt[i] <= time_quantum && rt[i]>0)
-            {
-                b=time;
-
-                time += rt[i];
-                a=i+1;
-                c=time;
-                x.push_back({a,b,c});
-
-                //Addition using shorthand operators
-                rt[i] = 0;
-                temps = 1;
+        float least = 0;
+        bsort(p);
+        vector < vector <float> >  x, cc; //cc currnt time processes container
+        float a = 0, b = 0, c = 0;
+        int n = p.size(), start = 0, br = 0;
+        float currenttime = p[0][1];
+        while (true) {
+            if (p.size() == 1) {
+                a = p[0][0];
+                b = ( p[0][1] > currenttime ) ? p[0][1] : currenttime ;
+                c = p[0][2] + b;
+                x.push_back({ a,b,c });
+                break;
+            }
+            for (int j = 0; j < p.size(); j++) { // p time <= current time
+                if (p[j][1] <= currenttime) { cc.push_back(p[j]); }
+            }
+            if (cc.empty()) { currenttime = p[0][1]; continue; }
+            float  next = -1;
+            for (int j = 0; j < p.size(); j++) {
+                if (p[j][1] > currenttime) { next = p[j][1]; break; } //next p time in
+            }
+            int del = 0 ,looop=cc.size();
+            for (int j = start; j < cc.size() ; j++) {
+                a = cc[j][0];
+                b = currenttime;
+                if (cc[j][2] > time) { p[j][2] = p[j][2] - time; c = time + currenttime; currenttime = time + currenttime; } // not finished
+                else {
+                    c = cc[j][2] + currenttime;
+                    currenttime = cc[j][2] + currenttime;
+                    cc.erase(cc.begin() + j);
+                    p.erase(p.begin() + j);
+                    del++;
+                    j--;
+                }
+                x.push_back({ a,b,c });
+                if (cc.empty()) { break; }
+                if (p.size() == 1) {  break; }
+                if (p.size() == 0) { br = 1; break; }
             }
 
-            else if (rt[i]>0)
-            {
-                a=i+1;
-                b=time;
-                rt[i] -= time_quantum;
-                //Subtraction using shorthand operators
-
-                time += time_quantum;
-                c=time;
-                x.push_back({a,b,c});
-                //Addition using shorthand operators
-            }
-
-            if (rt[i] == 0 && temps == 1)
-            {
-                remain--;
-
-
-                wt += time - art[i] - bt[i];
-                tat += time - art[i];
-                temps = 0;
-            }
-
-            if (i == n - 1)
-                i = 0;
-            else if (art[i + 1] <= time) ///<----here---->
-                i++;
-            else
-                i = 0;
-        }
+            if (currenttime >= next && next != -1) { start = looop - del; }
+            else { start = 0; }
+            if (br == 1) { break; }
+            cc.clear();
         }
 
-        //cout << "Average waiting time " << wt*1.0 / n << endl;
-        //cout<<"Average turn around time "<<tat*1.0/n<<endl;;
-
-
+        for (int j = 1; j <x.size(); j++) {
+            if (x[j][0] == x[j - 1][0]) {
+                x[j - 1][2] = x[j][2];
+                x.erase(x.begin() + j);
+                j--;
+            }
+        }
 
         return x;
 }

@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
    chartView = new QChartView(chart);
 
    draw();
+   //draw_chart();
 
    connect(add,SIGNAL(pressed()),this,SLOT(on_add_clicked()));
    connect(reset,SIGNAL(pressed()),this,SLOT(on_reset_clicked()));
@@ -159,7 +160,54 @@ void MainWindow::on_start_clicked(){
 }
 
 void MainWindow::draw_chart(){
+    chart->removeAllSeries();
+    QBarSet * temp;
+    if(result[0][1]!=0){
+         temp = new QBarSet("IDLE");
+         *temp << result[0][1];
+         temp->setColor(QColor(Qt::black));
+         series->append(temp);
+    }
+    for(int i=0;i<result.size();i++){
 
+
+        temp = new QBarSet(QString::number(result[i][0]));
+        *temp << result[i][2]-result[i][1];
+        temp->setColor(getAndAssignColor(result[i][0]));
+        series->append(temp);
+        if(i!=result.size()-1 &&   result[i+1][1]-result[i][2] !=0){
+            temp = new QBarSet("IDLE");
+            *temp << result[i+1][1]-result[i][2];
+            temp->setColor(QColor(Qt::black));
+            series->append(temp);
+        }
+       }
+
+       chart->addSeries(series);
+       QStringList categories;
+       categories << "Time";
+       QBarCategoryAxis *axisY = new QBarCategoryAxis();
+       axisY->append(categories);
+       chart->addAxis(axisY, Qt::AlignLeft);
+       series->attachAxis(axisY);
+       QValueAxis *axisX = new QValueAxis();
+       chart->addAxis(axisX, Qt::AlignBottom);
+       series->attachAxis(axisX);
+       chart->legend()->setVisible(true);
+
+       const auto markers = chart->legend()->markers();
+       QSet<QString> label;
+       for (QLegendMarker *marker : chart->legend()->markers()){
+           if(! label.contains(marker->label())){
+                label.insert(marker->label());
+           }
+           else{
+                marker->setVisible(false);
+           }
+       }
+
+       chart->legend()->setAlignment(Qt::AlignBottom);
+       chartView->setRenderHint(QPainter::Antialiasing);
 }
 void MainWindow::on_algorithm_change(int index){
     //data.clear();
@@ -216,6 +264,5 @@ void MainWindow::colorGenerator(){
         Palette.push_back(QColor::fromHsv(degree,255,255));
     }
 }
-
 
 int MainWindow::numOfUsedColors=0;

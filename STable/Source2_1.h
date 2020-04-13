@@ -34,7 +34,7 @@ vector < vector <float> >  priority_pre_emitive(vector < vector <string> >  in) 
 vector < vector <float> >  priority_non_pre_emitive(vector < vector <string> >  in) ;
 
 
-vector < vector <float> >  R_R(vector < vector <string> >  in,int tq) ;
+vector < vector <float> >  R_R(vector < vector <string> >  in, float time);
 
 
 

@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QProcess>
 #include <QComboBox>
+#include <QBarLegendMarker>
 #include <QTableWidget>
 #include <QPushButton>
 #include <QProgressBar>
