@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
    ganttChart = new QTableWidget;
    Quantum = new QLabel;
    quantumValue=new QLineEdit;
+   avgTime = new QLabel;
    quantumValue->setDisabled(true);
 
    series = new QHorizontalStackedBarSeries();
@@ -29,6 +30,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
    connect(myTable,SIGNAL(itemChanged(QTableWidgetItem *)),this,SLOT(on_myTable_itemChanged(QTableWidgetItem *)));
    connect(start,SIGNAL(pressed()),this,SLOT(on_start_clicked()));
    connect(algorithm,SIGNAL(activated(int)),this,SLOT(on_algorithm_change(int)));
+   this->setStyleSheet("QPushButton{height:40px;font-size:20px;background:#ff6363;"
+                       "border-radius:15px;"
+                       "}QPushButton:hover{background-color:#543864;}"
+                       "MainWindow{background-color:#ffbd69;}"
+                       "QTableWidget{background-color:#ffbd69;}"
+                       "QChart{background-color:#ffbd69;}"
+                       "QComboBox{background-color:#202040;}");
+
+
+
 }
 
 void MainWindow::draw(){
@@ -79,6 +90,7 @@ void MainWindow::draw(){
     chart->setAnimationOptions(QChart::SeriesAnimations);
 
     mainLayout->addWidget(chartView);
+    mainLayout->addWidget(avgTime);
 
 }
 
@@ -128,11 +140,23 @@ void MainWindow::on_remove_clicked(){
 void MainWindow::on_myTable_itemChanged(QTableWidgetItem *item)
 {
     QString temp  =item->text();
+    int flag =0;
+    for(int i=0;i<temp.size();i++){
+        if(isdigit(temp.toStdString()[i]) || temp[i]=='.')continue;
+        flag =1;
+    }
+    if(flag==1){
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","Please enter a valid Float Number");
+        messageBox.setFixedSize(800,400);
+        item->setText("");
+    }
     data[myTable->currentRow()][myTable->currentColumn()] =  temp.toStdString().c_str();
 }
 
 void MainWindow::on_start_clicked(){
     QVariant selected = algorithm->itemData(algorithm->currentIndex());
+    result.clear();
     if(selected ==0){
         result = fcfs(data);
     }
@@ -155,13 +179,14 @@ void MainWindow::on_start_clicked(){
     for(unsigned int i=0;i<result.size();i++){
         getAndAssignColor(result[i][0]);
     }
-    draw_ganttChart();
+    //draw_ganttChart();
     draw_chart();
 }
 
 void MainWindow::draw_chart(){
     chart->setAnimationDuration(2500);
     chart->removeAllSeries();
+    series->clear();
     QBarSet * temp;
     if(result[0][1]!=0){
          temp = new QBarSet("IDLE");
@@ -170,8 +195,6 @@ void MainWindow::draw_chart(){
          series->append(temp);
     }
     for(int i=0;i<result.size();i++){
-
-
         temp = new QBarSet(QString::number(result[i][0]));
         *temp << result[i][2]-result[i][1];
         temp->setColor(getAndAssignColor(result[i][0]));
@@ -215,6 +238,10 @@ void MainWindow::draw_chart(){
 
        chart->legend()->setAlignment(Qt::AlignBottom);
        chartView->setRenderHint(QPainter::Antialiasing);
+
+
+       avgTime->setText("Average Time = "+ QString::number(waiting_time(data,result))+" Seconds");
+       avgTime->setStyleSheet("QLabel{font-size:30px;}");
 }
 void MainWindow::on_algorithm_change(int index){
     //data.clear();
@@ -233,7 +260,6 @@ void MainWindow::on_algorithm_change(int index){
     else{
         quantumValue->setDisabled(true);
         quantumValue->setPlaceholderText("");
-
     }
 }
 

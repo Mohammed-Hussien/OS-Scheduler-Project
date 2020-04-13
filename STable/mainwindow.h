@@ -1,6 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include <QMainWindow>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include <QWidget>
 #include "Source2_1.h"
 #include <QDesktopWidget>
@@ -20,6 +23,7 @@
 #include <QScrollArea>
 #include <QFormLayout>
 #include <QHeaderView>
+#include <QMessageBox>
 #include <QMap>
 #include <QPair>
 #include <QDebug>
@@ -60,8 +64,7 @@ private:
     QPushButton * remove;
     QPushButton * reset;
     QTableWidget * ganttChart;
-
-
+    QLabel * avgTime;
     QHorizontalStackedBarSeries *series;
     QChart *chart;
     QChartView *chartView;

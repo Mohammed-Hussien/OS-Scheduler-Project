@@ -12,15 +12,11 @@ vector < vector <float> >  str_to_f(vector < vector <string> >  p);
 
 void myswap(float &a, float& b) ;
 
-
 void bsort(vector < vector <float> > &  sortingelement) ;
 
-float waiting_time(vector < vector <string> >  in, vector < vector <string> >  out) ;
-
+float waiting_time(vector < vector <string> >  in, vector < vector <float> > x);
 
 vector < vector <float> >  fcfs(vector < vector <string> >  in) ;
-
-
 
 vector < vector <float> >  sjf_non_pre_emitive(vector < vector <string> >  in) ;
 

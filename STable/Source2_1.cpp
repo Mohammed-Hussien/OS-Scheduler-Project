@@ -39,10 +39,10 @@ void bsort(vector < vector <float> > &  sortingelement) {
     }
 }
 
-float waiting_time(vector < vector <string> >  in, vector < vector <string> >  out) { // data in , data out
-    vector < vector <float> >  p, x;
+float waiting_time(vector < vector <string> >  in, vector < vector <float> > x) { // data in , data out
+    vector < vector <float> >  p;
     p = str_to_f(in);
-    x = str_to_f(out);
+   // x = str_to_f(out);
     float r = 0, finish = 0, arrive = 0, burst = 0; // , turn_around = 0        // r =  f -ar -b
     int n = p.size(), m = x.size();
     for (int i = 0; i < n; i++) {
@@ -127,6 +127,7 @@ vector < vector <float> >  sjf_pre_emitive(vector < vector <string> >  in) {
     float currenttime = p[0][1];
     while (true) {
         if (p.size() == 1) {
+            if(p[0][1]>currenttime){currenttime=p[0][1];}
             a = p[0][0];
             b = currenttime;
             c = p[0][2] + currenttime;
@@ -149,7 +150,7 @@ vector < vector <float> >  sjf_pre_emitive(vector < vector <string> >  in) {
         a = cc[w][0];
         b = currenttime;
         if (next != -1) {
-            if (cc[w][2] + currenttime > next) { c = next; } //not finished
+            if (cc[w][2] + currenttime >= next) { c = next; } //not finished
 
             if (cc[w][2] + currenttime < next) { c = p[w][2] + currenttime; }//finished
         }
@@ -181,6 +182,7 @@ vector < vector <float> >  priority_pre_emitive(vector < vector <string> >  in) 
     float currenttime = p[0][1];
     while (true) {
         if (p.size() == 1) {
+            if(p[0][1]>currenttime){currenttime=p[0][1];}
             a = p[0][0];
             b = currenttime;
             c = p[0][2] + currenttime;
@@ -203,7 +205,7 @@ vector < vector <float> >  priority_pre_emitive(vector < vector <string> >  in) 
         a = cc[w][0];
         b = currenttime;
         if (next != -1) {
-            if (cc[w][2] + currenttime > next) { c = next; } //not finished
+            if (cc[w][2] + currenttime >= next) { c = next; } //not finished
 
             if (cc[w][2] + currenttime < next) { c = p[w][2] + currenttime; }//finished
         }
