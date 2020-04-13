@@ -14,10 +14,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
    ganttChart = new QTableWidget;
    Quantum = new QLabel;
    quantumValue=new QLineEdit;
+   series = new QHorizontalStackedBarSeries();
+   chart = new QChart();
    quantumValue->setDisabled(true);
 
 
    draw();
+
    connect(add,SIGNAL(pressed()),this,SLOT(on_add_clicked()));
    connect(reset,SIGNAL(pressed()),this,SLOT(on_reset_clicked()));
    connect(remove,SIGNAL(pressed()),this,SLOT(on_remove_clicked()));
@@ -68,6 +71,17 @@ void MainWindow::draw(){
     setWindowIcon(QIcon(":images/myappico.ico"));
     setWindowTitle("Scheduler");
     resize(QDesktopWidget().availableGeometry(this).size() * 0.6);
+
+
+
+    chartView = new QChartView(chart);
+    chart->setTitle("Porccess Gantt Chart");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+
+    mainLayout->addWidget(chartView);
+
+
 }
 
 
@@ -75,7 +89,26 @@ MainWindow::~MainWindow(){
 }
 
 
+void MainWindow::draw_ganttChart(){
+    for(int i=0;i<result.size();i++){
 
+        if(ProcessColors.find(result[i][0]) == ProcessColors.end()){
+            ProcessColors[result[i][0]]= QColor((23+70*i)%255,(23+35*i)%255,(2+10*i)%255,(163+1*i)%255);
+        }
+        for(int y=10*result[i][1];y<10*result[i][2];y++){
+            ganttChart->setColumnCount(y+1);
+            ganttChart->setItem(0,y,new QTableWidgetItem(QString::number(result[i][0])));
+            ganttChart->setItem(1, y, new QTableWidgetItem);
+            ganttChart->item(1, y)->setBackground(ProcessColors[result[i][0]]);
+        }
+        ganttChart->setRowCount(3);
+        for(int z=0;z<ganttChart->columnCount();z++){
+             ganttChart->setColumnWidth(z,1);
+             ganttChart->setItem(2,z,new QTableWidgetItem(QString::number(z/10.0)));
+             //ganttChart->item(1,z)->setText(QString::number(z/10.0));
+        }
+    }
+}
 void MainWindow::on_add_clicked(){
 
 
@@ -124,24 +157,7 @@ void MainWindow::on_start_clicked(){
     else if(selected ==5){
         result=sjf_non_pre_emitive(data);
     }
-    for(int i=0;i<result.size();i++){
-
-        if(ProcessColors.find(result[i][0]) == ProcessColors.end()){
-            ProcessColors[result[i][0]]= QColor((23+70*i)%255,(23+35*i)%255,(2+10*i)%255,(163+1*i)%255);
-        }
-        for(int y=10*result[i][1];y<10*result[i][2];y++){
-            ganttChart->setColumnCount(y+1);
-            ganttChart->setItem(0,y,new QTableWidgetItem(QString::number(result[i][0])));
-            ganttChart->setItem(1, y, new QTableWidgetItem);
-            ganttChart->item(1, y)->setBackground(ProcessColors[result[i][0]]);
-        }
-        ganttChart->setRowCount(3);
-        for(int z=0;z<ganttChart->columnCount();z++){
-             ganttChart->setColumnWidth(z,1);
-             ganttChart->setItem(2,z,new QTableWidgetItem(QString::number(z/10.0)));
-             //ganttChart->item(1,z)->setText(QString::number(z/10.0));
-        }
-    }
+    draw_ganttChart();
 }
 
 

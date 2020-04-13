@@ -59,6 +59,13 @@ private:
     QPushButton * remove;
     QPushButton * reset;
     QTableWidget * ganttChart;
+
+
+    QHorizontalStackedBarSeries *series;
+    QChart *chart;
+    QChartView *chartView;
+
+
     QMap<int,QColor> ProcessColors;
 
     vector <vector<string> >data ;
@@ -71,5 +78,6 @@ private slots:
     void on_start_clicked();
     void on_reset_clicked();
     void on_algorithm_change(int);
+    void draw_ganttChart();
 };
 #endif // MAINWINDOW_H
