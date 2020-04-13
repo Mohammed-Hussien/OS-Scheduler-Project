@@ -61,7 +61,7 @@ void MainWindow::draw(){
     leftLayout->addWidget(remove);
     leftLayout->addWidget(reset);
     topLayout->addWidget(myTable);
-    mainLayout->addWidget(ganttChart);
+    //mainLayout->addWidget(ganttChart);
     ganttChart->horizontalHeader()->hide();
     ganttChart->verticalHeader()->hide();
     ganttChart->setRowCount(2);
@@ -160,6 +160,7 @@ void MainWindow::on_start_clicked(){
 }
 
 void MainWindow::draw_chart(){
+    chart->setAnimationDuration(2500);
     chart->removeAllSeries();
     QBarSet * temp;
     if(result[0][1]!=0){
@@ -191,6 +192,12 @@ void MainWindow::draw_chart(){
        chart->addAxis(axisY, Qt::AlignLeft);
        series->attachAxis(axisY);
        QValueAxis *axisX = new QValueAxis();
+       axisX->setTickType(QValueAxis::TicksDynamic);
+       axisX->setTickAnchor(0);
+       axisX->setTickInterval(1);
+       axisX->setLabelFormat("%i");
+       axisX->setMinorTickCount(1);
+       //axisX->setTickCount(result.back()[2]);
        chart->addAxis(axisX, Qt::AlignBottom);
        series->attachAxis(axisX);
        chart->legend()->setVisible(true);
